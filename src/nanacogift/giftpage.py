@@ -20,7 +20,7 @@ class GiftPage:
         self.__driver = None
         self.__results = {"success": [], "duplicate": [], "failure": []}
 
-    def register_gift(self) -> dict:
+    def register_gift(self) -> None:
 
         for url in self.__urls:
             try:
@@ -30,8 +30,9 @@ class GiftPage:
                 self.__results["success"].append(url)
             except DuplicateException:
                 self.__results["duplicate"].append(url)
-            except:
+            except Exception as e:
                 self.__results["failure"].append(url)
+                log.error(e)
             finally:
                 self.__driver.quit()
                 time.sleep(3)
@@ -64,7 +65,7 @@ class GiftPage:
         # ギフトコード入力（別ウィンドウ）
         time.sleep(3)
         self.__driver.find_element_by_xpath(
-            "//input[contains(@alt, '登録')]").click()
+            "//form[@target='nanacogift']/p/input[@type='image']").click()
         WebDriverWait(self.__driver, 3).until(
             lambda d: len(d.window_handles) > 1)
         giftpage_handle = self.__driver.window_handles[1]
